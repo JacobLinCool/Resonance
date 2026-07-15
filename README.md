@@ -41,6 +41,10 @@ MusicKit playback require a signed App ID with both services enabled.
 4. Play music nearby. Resonance starts recognition after the level crosses the
    loudness threshold.
 
+If the menu bar is too crowded to show the Resonance icon, launch Resonance
+again from Spotlight, Finder, or Applications. The running app opens a
+standalone control window with the same state and controls as the menu bar.
+
 If you previously denied either request, enable Resonance in:
 
 - **System Settings › Privacy & Security › Microphone**
@@ -92,8 +96,14 @@ Click **Re-sync** to stop playback and listen for a fresh match. Click
 
 ## Troubleshooting
 
-**There is no Dock icon.** Resonance is menu-bar only. Look for the waveform
-icon at the top-right of the screen.
+**There is no Dock icon.** Resonance stays out of the Dock and normally opens
+from the waveform icon at the top-right of the screen. Launching the running
+app again opens the standalone control window.
+
+**The menu bar icon is missing.** macOS can temporarily hide menu bar items when
+space is limited. Launch Resonance again from Spotlight, Finder, or Applications
+to open its standalone control window. When the icon is visible, hold Command
+and drag it toward the right to give it a more accessible position.
 
 **Recognition does not start.** Confirm microphone access, an internet
 connection, and a threshold below the live meter level. Source builds must also
@@ -214,6 +224,7 @@ release process.
 
 | File | Responsibility |
 | --- | --- |
+| `AppDelegate.swift` | Shared coordinator, app-reopen handling, and the standalone fallback window. |
 | `AppCoordinator.swift` | Main-actor state machine, authorization, and service transitions. |
 | `AudioMonitor.swift` | AVAudioEngine tap, multichannel RMS meter, atomic threshold, and hysteresis gate. |
 | `ShazamRecognizer.swift` | Streaming SHSession wrapper with synchronized session replacement and stale-result rejection. |
