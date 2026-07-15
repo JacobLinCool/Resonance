@@ -1,0 +1,119 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    needs: quality
+    runs-on: macos-26
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Validate release version
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tags must use vX.Y.Z format" >&2
+            exit 1
+          fi
+          {
+            echo "APP_VERSION=${GITHUB_REF_NAME#v}"
+            echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER"
+          } >> "$GITHUB_ENV"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Import signing and notarization credentials
+        env:
+          DEVELOPER_ID_CERT_P12_BASE64: ${{ secrets.DEVELOPER_ID_CERT_P12_BASE64 }}
+          DEVELOPER_ID_CERT_PASSWORD: ${{ secrets.DEVELOPER_ID_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          AC_API_KEY_P8_BASE64: ${{ secrets.AC_API_KEY_P8_BASE64 }}
+          AC_API_KEY_ID: ${{ secrets.AC_API_KEY_ID }}
+          AC_API_ISSUER_ID: ${{ secrets.AC_API_ISSUER_ID }}
+        run: |
+          umask 077
+          KEYCHAIN_PATH="$RUNNER_TEMP/resonance-signing.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/resonance-cert.p12"
+          API_KEY_PATH="$RUNNER_TEMP/resonance-notary-key.p8"
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+
+          printf '%s' "$DEVELOPER_ID_CERT_P12_BASE64" | base64 --decode > "$CERT_PATH"
+          security import "$CERT_PATH" \
+            -P "$DEVELOPER_ID_CERT_PASSWORD" \
+            -t cert \
+            -f pkcs12 \
+            -k "$KEYCHAIN_PATH" \
+            -T /usr/bin/codesign
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s \
+            -k "$KEYCHAIN_PASSWORD" \
+            "$KEYCHAIN_PATH" \
+            >/dev/null
+
+          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" \
+            | awk -F '"' '/Developer ID Application/ { print $2; exit }')"
+          if [ -z "$IDENTITY" ]; then
+            echo "No Developer ID Application identity found" >&2
+            exit 1
+          fi
+
+          printf '%s' "$AC_API_KEY_P8_BASE64" | base64 --decode > "$API_KEY_PATH"
+          xcrun notarytool store-credentials resonance-notary \
+            --key "$API_KEY_PATH" \
+            --key-id "$AC_API_KEY_ID" \
+            --issuer "$AC_API_ISSUER_ID" \
+            --keychain "$KEYCHAIN_PATH"
+
+          {
+            echo "SIGN_IDENTITY=$IDENTITY"
+            echo "NOTARY_PROFILE=resonance-notary"
+            echo "NOTARY_KEYCHAIN=$KEYCHAIN_PATH"
+          } >> "$GITHUB_ENV"
+
+      - name: Build, sign, notarize, and verify artifacts
+        run: |
+          make package
+          test ! -e dist/VALIDATION_ONLY
+          (cd dist && shasum -a 256 -c SHA256SUMS)
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/Resonance-*.dmg \
+            dist/Resonance-*.zip \
+            dist/SHA256SUMS \
+            --title "Resonance $GITHUB_REF_NAME" \
+            --generate-notes
+
+      - name: Remove signing credentials
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/resonance-cert.p12" "$RUNNER_TEMP/resonance-notary-key.p8"
+          KEYCHAIN_PATH="${KEYCHAIN_PATH:-$RUNNER_TEMP/resonance-signing.keychain-db}"
+          if [ -e "$KEYCHAIN_PATH" ]; then
+            security delete-keychain "$KEYCHAIN_PATH" || rm -f "$KEYCHAIN_PATH"
+          fi

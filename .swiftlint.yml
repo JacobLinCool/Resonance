@@ -1,0 +1,15 @@
+# SwiftLint configuration for Resonance.
+included:
+  - Sources
+  - Tests
+  - scripts/GenerateAppIcon.swift
+
+line_length:
+  warning: 120
+  ignores_comments: true
+
+identifier_name:
+  min_length: 2   # allow established audio/math names such as `db`
+
+trailing_comma:
+  mandatory_comma: true
