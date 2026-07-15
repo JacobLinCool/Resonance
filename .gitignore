@@ -9,6 +9,7 @@ DerivedData/
 dist/
 .dist-build.*
 .dist-previous.*
+.app-store-build.*
 
 # Xcode user state
 xcuserdata/

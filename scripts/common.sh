@@ -2,6 +2,8 @@
 # Shared configuration and helpers. Source from a Bash script in this directory.
 
 APP_NAME="Resonance"
+APP_DISPLAY_NAME="Resonance: Music Sync"
+APP_CATEGORY="public.app-category.music"
 SCHEME="Resonance"
 PROJECT="Resonance.xcodeproj"
 DEFAULT_BUNDLE_ID="dev.jacoblincool.Resonance"
@@ -164,8 +166,39 @@ validate_app() {
   version="$(bundle_value "$app" CFBundleShortVersionString)" \
     || fail "could not read app version from $app"
   [ -n "$version" ] || fail "app version is empty: $app"
+
+  local display_name category uses_non_exempt_encryption
+  display_name="$(bundle_value "$app" CFBundleDisplayName)" \
+    || fail "could not read display name from $app"
+  [ "$display_name" = "$APP_DISPLAY_NAME" ] \
+    || fail "display name mismatch at $app: expected $APP_DISPLAY_NAME, found $display_name"
+  category="$(bundle_value "$app" LSApplicationCategoryType)" \
+    || fail "could not read App Store category from $app"
+  [ "$category" = "$APP_CATEGORY" ] \
+    || fail "App Store category mismatch at $app: expected $APP_CATEGORY, found $category"
+  uses_non_exempt_encryption="$(bundle_value "$app" ITSAppUsesNonExemptEncryption)" \
+    || fail "could not read export compliance declaration from $app"
+  [ "$uses_non_exempt_encryption" = "false" ] \
+    || fail "app must declare that it does not use non-exempt encryption: $app"
+
+  local privacy_manifest="$app/Contents/Resources/PrivacyInfo.xcprivacy"
+  [ -f "$privacy_manifest" ] || fail "app has no bundled privacy manifest: $app"
+  plutil -lint "$privacy_manifest" >/dev/null \
+    || fail "app has an invalid privacy manifest: $app"
+
   codesign --verify --deep --strict "$app" \
     || fail "code signature validation failed: $app"
+
+  local signed_entitlements entitlement
+  signed_entitlements="$(codesign -d --entitlements :- "$app" 2>/dev/null)" \
+    || fail "could not read signed entitlements from $app"
+  for entitlement in \
+    com.apple.security.app-sandbox \
+    com.apple.security.device.audio-input \
+    com.apple.security.network.client; do
+    [ "$(/usr/libexec/PlistBuddy -c "Print :$entitlement" /dev/stdin <<<"$signed_entitlements")" = "true" ] \
+      || fail "required entitlement is missing or false at $app: $entitlement"
+  done
 }
 
 assert_replaceable_app() {

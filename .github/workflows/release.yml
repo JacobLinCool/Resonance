@@ -117,3 +117,49 @@ jobs:
           if [ -e "$KEYCHAIN_PATH" ]; then
             security delete-keychain "$KEYCHAIN_PATH" || rm -f "$KEYCHAIN_PATH"
           fi
+
+  app-store:
+    needs: quality
+    runs-on: macos-26
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Validate App Store version
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tags must use vX.Y.Z format" >&2
+            exit 1
+          fi
+          {
+            echo "APP_VERSION=${GITHUB_REF_NAME#v}"
+            echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER"
+          } >> "$GITHUB_ENV"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Prepare App Store Connect credentials
+        env:
+          AC_API_KEY_P8_BASE64: ${{ secrets.AC_API_KEY_P8_BASE64 }}
+        run: |
+          umask 077
+          printf '%s' "$AC_API_KEY_P8_BASE64" \
+            | base64 --decode \
+            > "$RUNNER_TEMP/app-store-connect.p8"
+
+      - name: Archive, cloud-sign, and upload to App Store Connect
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_API_KEY_PATH: ${{ runner.temp }}/app-store-connect.p8
+          APP_STORE_API_KEY_ID: ${{ secrets.AC_API_KEY_ID }}
+          APP_STORE_API_ISSUER_ID: ${{ secrets.AC_API_ISSUER_ID }}
+        run: make app-store-upload
+
+      - name: Remove App Store Connect credentials
+        if: always()
+        run: rm -f "$RUNNER_TEMP/app-store-connect.p8"

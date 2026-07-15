@@ -11,4 +11,6 @@ CONFIG="${1:-Debug}"
 
 info "Building $APP_NAME ($CONFIG)"
 build_app "$CONFIG" "$ROOT_DIR/DerivedData"
-info "Built $(app_path "$CONFIG" "$ROOT_DIR/DerivedData")"
+APP="$(app_path "$CONFIG" "$ROOT_DIR/DerivedData")"
+validate_app "$APP"
+info "Built $APP"

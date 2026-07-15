@@ -2,6 +2,11 @@ name: Resonance
 options:
   bundleIdPrefix: dev.jacoblincool
   createIntermediateGroups: true
+  defaultConfig: Release
+configs:
+  Debug: debug
+  Release: release
+  AppStore: release
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -11,6 +16,8 @@ settings:
     CODE_SIGN_IDENTITY: "-"
     DEVELOPMENT_TEAM: ""
     ENABLE_HARDENED_RUNTIME: "NO"
+    ENABLE_APP_SANDBOX: "YES"
+    ENABLE_OUTGOING_NETWORK_CONNECTIONS: "YES"
 targets:
   Resonance:
     type: application
@@ -19,6 +26,7 @@ targets:
     sources:
       - path: Sources
       - path: Resources/Assets.xcassets
+      - path: Resources/PrivacyInfo.xcprivacy
     settings:
       base:
         PRODUCT_NAME: Resonance
@@ -54,4 +62,4 @@ schemes:
           parallelizable: true
           randomExecutionOrder: true
     archive:
-      config: Release
+      config: AppStore

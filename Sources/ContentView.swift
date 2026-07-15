@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(AppCoordinator.self) private var coordinator
+    let showSettings: @MainActor () -> Void
 
     var body: some View {
         @Bindable var coordinator = coordinator
@@ -138,6 +139,15 @@ struct ContentView: View {
             }
 
             Spacer()
+
+            Button {
+                showSettings()
+            } label: {
+                Image(systemName: "gearshape")
+                    .accessibilityLabel("Settings and Help")
+            }
+            .buttonStyle(.borderless)
+            .help("Settings and Help")
 
             Button("Quit") { NSApp.terminate(nil) }
         }

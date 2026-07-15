@@ -97,7 +97,7 @@ if [ -n "${SIGN_IDENTITY:-}" ]; then
     --entitlements "$ENTITLEMENTS" \
     --sign "$SIGN_IDENTITY" \
     "$APP"
-  codesign --verify --deep --strict --verbose=2 "$APP"
+  validate_app "$APP"
 
   SIGNATURE_DETAILS="$(codesign -dvv "$APP" 2>&1)"
   [[ "$SIGNATURE_DETAILS" = *"(runtime)"* ]] \

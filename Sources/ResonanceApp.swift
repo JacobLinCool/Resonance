@@ -6,8 +6,10 @@ struct ResonanceApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            ContentView()
-                .environment(appDelegate.coordinator)
+            ContentView {
+                appDelegate.showSettings()
+            }
+            .environment(appDelegate.coordinator)
         } label: {
             // Reads only `state`, so the menu bar icon refreshes on state
             // changes — not on every loudness update.

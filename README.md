@@ -15,7 +15,14 @@ Resonance requires:
 
 No public binary has been published yet. To use Resonance today, complete the
 [signed development setup](#run-a-working-development-build). After the first
-release is available, installation is:
+release is available, the same feature set will be distributed through two
+channels:
+
+- **GitHub Releases:** free Developer ID-signed, notarized DMG and ZIP.
+- **Mac App Store:** paid listing named **Resonance: Music Sync**, priced at
+  approximately US$4.99.
+
+To install the direct-download release:
 
 1. Download the DMG and `SHA256SUMS` from
    [GitHub Releases](https://github.com/JacobLinCool/Resonance/releases).
@@ -52,6 +59,10 @@ If you previously denied either request, enable Resonance in:
 
 The default threshold is `-50 dBFS`. Move it left for quieter rooms or right if
 background noise triggers recognition too easily.
+
+Click the gear button to open **Settings and Help**, which explains every
+control, lists the playback requirements, and provides the
+[Privacy Policy](PRIVACY.md) and support links.
 
 The **Sync adjustment** slider is always available and adds a `-500 ms` to
 `+500 ms` manual trim on top of Resonance's built-in `+200 ms` playback offset.
@@ -205,6 +216,8 @@ Then use:
 | `make run` | Build and launch; pass `DEVELOPMENT_TEAM` and `BUNDLE_ID` for working services. |
 | `make install` / `make uninstall` | Install or remove an exact, bundle-ID-checked path. |
 | `make package` | Create a validated `.app`, `.zip`, `.dmg`, and `SHA256SUMS` in `dist/`. |
+| `make app-store-archive` | Create and validate a signed `AppStore` archive. |
+| `make app-store-upload` | Cloud-sign and upload an archive to App Store Connect. |
 | `make clean` | Remove the generated project and local build/package output. |
 
 To build signed distribution artifacts locally:
@@ -218,7 +231,8 @@ NOTARY_PROFILE="notarytool-profile" \
 Without both distribution credentials, `make package` produces validation-only
 artifacts, prints a warning, and adds `dist/VALIDATION_ONLY` to distinguish them
 from a release. See [docs/RELEASING.md](docs/RELEASING.md) for the complete
-release process.
+release process and [docs/APP_STORE.md](docs/APP_STORE.md) for the canonical
+App Store Connect copy.
 
 ## Architecture
 
@@ -235,6 +249,7 @@ release process.
 | `PlaybackSessionController.swift` | Bounded startup alignment, one-shot manual adjustment, and playback-end watching. |
 | `PlaybackSynchronization.swift` | Timestamped error measurement, robust filtering, and bounded startup-correction policy. |
 | `ContentView.swift` | Menu-bar popover, live meter, threshold, sync adjustment, status, and controls. |
+| `SettingsView.swift` | Requirements, control explanations, privacy disclosure, and public support links. |
 
 ## License
 

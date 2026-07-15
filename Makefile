@@ -1,7 +1,7 @@
 # Resonance — thin wrappers around scripts/. Run `make` for the list.
 
 .DEFAULT_GOAL := help
-.PHONY: help setup generate build release run install uninstall clean lint format format-check scripts test check package icon
+.PHONY: help setup generate build release run install uninstall clean lint format format-check scripts test check package app-store-archive app-store-upload icon
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -50,6 +50,12 @@ check: format-check lint scripts test build ## Run every local quality gate
 
 package: ## Package for distribution into dist/
 	@./scripts/package.sh
+
+app-store-archive: ## Create a signed Mac App Store archive
+	@./scripts/app-store.sh archive
+
+app-store-upload: ## Archive and upload a build to App Store Connect
+	@./scripts/app-store.sh upload
 
 icon: ## Regenerate the app icon PNGs
 	@swift scripts/GenerateAppIcon.swift Resources/Assets.xcassets/AppIcon.appiconset
