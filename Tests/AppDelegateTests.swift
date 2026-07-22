@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 import XCTest
 
 @testable import Resonance
@@ -34,11 +35,11 @@ final class AppDelegateTests: XCTestCase {
         XCTAssertEqual(presenter.showCount, 2)
     }
 
-    func testSettingsWindowControllerCreatesOneVisibleReusableWindow() {
-        let presenter = SettingsWindowController()
+    func testPanelWindowControllerCreatesOneVisibleReusableWindow() {
+        let presenter = PanelWindowController(title: "Test Panel") { AnyView(Text(verbatim: "Test")) }
 
         presenter.show()
-        let initialWindows = settingsWindows
+        let initialWindows = panelWindows
         defer { initialWindows.forEach { $0.close() } }
 
         XCTAssertEqual(initialWindows.count, 1)
@@ -46,12 +47,12 @@ final class AppDelegateTests: XCTestCase {
 
         presenter.show()
 
-        XCTAssertEqual(settingsWindows.count, 1)
-        XCTAssertTrue(settingsWindows[0] === initialWindows[0])
+        XCTAssertEqual(panelWindows.count, 1)
+        XCTAssertTrue(panelWindows[0] === initialWindows[0])
     }
 
-    private var settingsWindows: [NSWindow] {
-        NSApp.windows.filter { $0.title == "Resonance Settings and Help" }
+    private var panelWindows: [NSWindow] {
+        NSApp.windows.filter { $0.title == "Test Panel" }
     }
 }
 

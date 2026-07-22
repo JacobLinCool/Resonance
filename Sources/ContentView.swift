@@ -2,7 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(UpdateChecker.self) private var updateChecker
     let showSettings: @MainActor () -> Void
+    let showHistory: @MainActor () -> Void
 
     var body: some View {
         @Bindable var coordinator = coordinator
@@ -13,7 +15,10 @@ struct ContentView: View {
             if let song = coordinator.matchedSong {
                 songDetails(song)
             }
-            if coordinator.state == .active {
+            if coordinator.state == .playing {
+                playbackProgress
+            }
+            if coordinator.state == .active || coordinator.isProbing {
                 meter
             }
             VStack(alignment: .leading, spacing: 2) {
@@ -27,11 +32,12 @@ struct ContentView: View {
                 Slider(value: $coordinator.thresholdDB, in: -60...0, step: 1)
             }
             syncAdjustment
+            followRoom
             if let error = coordinator.lastError {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-                    .fixedSize(horizontal: false, vertical: true)
+                errorDetails(error)
+            }
+            if let update = updateChecker.availableUpdate {
+                updateBanner(update)
             }
             Divider()
             footer
@@ -58,13 +64,44 @@ struct ContentView: View {
     }
 
     private func songDetails(_ song: RecognizedSong) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
-            Text(song.title).font(.body.weight(.medium)).lineLimit(1)
-            if let artist = song.artist {
-                Text(artist).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+        HStack(spacing: 8) {
+            ArtworkView(url: song.artworkURL, size: 40)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(song.title).font(.body.weight(.medium)).lineLimit(1)
+                if let artist = song.artist {
+                    Text(artist).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                }
+            }
+            Spacer(minLength: 0)
+            if let url = song.appleMusicURL {
+                Link(destination: url) {
+                    Image(systemName: "arrow.up.forward.app")
+                        .accessibilityLabel("Open in Apple Music")
+                }
+                .foregroundStyle(.secondary)
+                .help("Open in Apple Music")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Samples the non-observable player position once per second.
+    private var playbackProgress: some View {
+        TimelineView(.periodic(from: .now, by: 1)) { _ in
+            if let progress = coordinator.playbackProgress {
+                VStack(alignment: .leading, spacing: 2) {
+                    ProgressView(value: progress.elapsed, total: progress.duration)
+                        .controlSize(.small)
+                    HStack {
+                        Text(formattedTime(progress.elapsed))
+                        Spacer()
+                        Text(formattedTime(progress.duration))
+                    }
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.tertiary)
+                }
+            }
+        }
     }
 
     private var meter: some View {
@@ -75,18 +112,16 @@ struct ContentView: View {
                 active: coordinator.isStreamingToRecognizer
             )
             .frame(height: 8)
-            Text(
-                coordinator.isStreamingToRecognizer
-                    ? "Recognition stream active"
-                    : "Waiting for music above the threshold"
-            )
-            .font(.caption2)
-            .foregroundStyle(.secondary)
+            Text(meterCaption)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
 
     private var syncAdjustment: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        @Bindable var coordinator = coordinator
+
+        return VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 8) {
                 Text("Sync adjustment").font(.caption)
                 Spacer()
@@ -100,10 +135,7 @@ struct ContentView: View {
                 .disabled(abs(coordinator.syncAdjustmentMilliseconds) < 0.5)
             }
             Slider(
-                value: Binding(
-                    get: { coordinator.syncAdjustmentMilliseconds },
-                    set: { coordinator.syncAdjustmentMilliseconds = $0 }
-                ),
+                value: $coordinator.syncAdjustmentMilliseconds,
                 in: AppCoordinator.syncAdjustmentRange,
                 step: 10,
                 onEditingChanged: { isEditing in
@@ -117,12 +149,53 @@ struct ContentView: View {
             .accessibilityLabel("Sync adjustment")
             .accessibilityValue(formattedSyncAdjustment)
             HStack {
-                Text("−500 ms")
+                Text(verbatim: "−500 ms")
                 Spacer()
-                Text("+500 ms")
+                Text(verbatim: "+500 ms")
             }
             .font(.caption2.monospacedDigit())
             .foregroundStyle(.tertiary)
+        }
+    }
+
+    private var followRoom: some View {
+        @Bindable var coordinator = coordinator
+
+        return Toggle(isOn: $coordinator.followRoomEnabled) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Follow the room").font(.caption)
+                Text("Re-listen during playback to catch song changes.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .toggleStyle(.switch)
+        .controlSize(.mini)
+    }
+
+    private func errorDetails(_ error: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(error)
+                .font(.caption)
+                .foregroundStyle(.red)
+                .fixedSize(horizontal: false, vertical: true)
+            if let recovery = coordinator.lastErrorRecovery {
+                Button("Open System Settings") {
+                    NSWorkspace.shared.open(recovery.settingsURL)
+                }
+                .controlSize(.small)
+            }
+        }
+    }
+
+    private func updateBanner(_ update: AvailableUpdate) -> some View {
+        Link(destination: update.downloadURL) {
+            Label {
+                Text("Version \(update.version.description) is available")
+            } icon: {
+                Image(systemName: "arrow.down.circle")
+            }
+            .font(.caption)
         }
     }
 
@@ -141,6 +214,15 @@ struct ContentView: View {
             Spacer()
 
             Button {
+                showHistory()
+            } label: {
+                Image(systemName: "clock.arrow.circlepath")
+                    .accessibilityLabel("History")
+            }
+            .buttonStyle(.borderless)
+            .help("Recognition history")
+
+            Button {
                 showSettings()
             } label: {
                 Image(systemName: "gearshape")
@@ -155,7 +237,7 @@ struct ContentView: View {
 
     // MARK: - State styling
 
-    private var stateLabel: String {
+    private var stateLabel: LocalizedStringKey {
         switch coordinator.state {
         case .disabled: return coordinator.isAuthorizing ? "Authorizing" : "Disabled"
         case .active: return coordinator.isStreamingToRecognizer ? "Recognizing" : "Active"
@@ -164,7 +246,18 @@ struct ContentView: View {
         }
     }
 
-    private var primaryActionTitle: String {
+    private var meterCaption: LocalizedStringKey {
+        if coordinator.isProbing {
+            return coordinator.isStreamingToRecognizer
+                ? "Checking the room for changes"
+                : "Listening to the room"
+        }
+        return coordinator.isStreamingToRecognizer
+            ? "Recognition stream active"
+            : "Waiting for music above the threshold"
+    }
+
+    private var primaryActionTitle: LocalizedStringKey {
         if coordinator.isAuthorizing { return "Authorizing…" }
         return coordinator.state == .disabled ? "Enable" : "Disable"
     }
@@ -174,6 +267,10 @@ struct ContentView: View {
         return milliseconds >= 0 ? "+\(milliseconds) ms" : "\(milliseconds) ms"
     }
 
+    private func formattedTime(_ time: TimeInterval) -> String {
+        Duration.seconds(time).formatted(.time(pattern: .minuteSecond))
+    }
+
     private var stateColor: Color {
         switch coordinator.state {
         case .disabled: return .secondary
@@ -181,6 +278,28 @@ struct ContentView: View {
         case .startingPlayback: return .blue
         case .playing: return .green
         }
+    }
+}
+
+/// Rounded cover art with a neutral placeholder while loading or missing.
+struct ArtworkView: View {
+    let url: URL?
+    let size: CGFloat
+
+    var body: some View {
+        AsyncImage(url: url) { image in
+            image.resizable().scaledToFill()
+        } placeholder: {
+            ZStack {
+                RoundedRectangle(cornerRadius: size / 6).fill(.quaternary)
+                Image(systemName: "music.note")
+                    .font(.system(size: size * 0.4))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: size / 6))
+        .accessibilityHidden(true)
     }
 }
 
