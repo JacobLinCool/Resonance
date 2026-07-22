@@ -24,6 +24,10 @@ struct RecognizedSong: Sendable, Equatable {
     /// Apple Music catalog identifier, used to fetch and play the track with
     /// MusicKit. Nil when ShazamKit couldn't map the match to the catalog.
     let appleMusicID: String?
+    /// Cover art for display; loaded over HTTPS only.
+    let artworkURL: URL?
+    /// The song's public Apple Music page.
+    let appleMusicURL: URL?
 
     init?(from item: SHMatchedMediaItem) {
         guard let title = item.title?.trimmedNonempty else { return nil }
@@ -31,12 +35,26 @@ struct RecognizedSong: Sendable, Equatable {
         self.title = title
         self.artist = item.artist?.trimmedNonempty
         self.appleMusicID = item.appleMusicID?.trimmedNonempty
+        self.artworkURL = item.artworkURL.flatMap(Self.secureURL)
+        self.appleMusicURL = item.appleMusicURL.flatMap(Self.secureURL)
     }
 
-    init(title: String, artist: String?, appleMusicID: String?) {
+    init(
+        title: String,
+        artist: String?,
+        appleMusicID: String?,
+        artworkURL: URL? = nil,
+        appleMusicURL: URL? = nil
+    ) {
         self.title = title
         self.artist = artist
         self.appleMusicID = appleMusicID
+        self.artworkURL = artworkURL.flatMap(Self.secureURL)
+        self.appleMusicURL = appleMusicURL.flatMap(Self.secureURL)
+    }
+
+    private static func secureURL(_ url: URL) -> URL? {
+        url.scheme?.lowercased() == "https" ? url : nil
     }
 }
 
