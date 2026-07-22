@@ -8,6 +8,16 @@ line_length:
   warning: 120
   ignores_comments: true
 
+# The 0.2.0 coordinator and its tests legitimately exceed the defaults; keep a
+# generous ceiling rather than splitting types artificially.
+file_length:
+  warning: 600
+  error: 1200
+
+type_body_length:
+  warning: 350
+  error: 500
+
 identifier_name:
   min_length: 2   # allow established audio/math names such as `db`
 

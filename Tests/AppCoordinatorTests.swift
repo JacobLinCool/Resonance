@@ -44,7 +44,10 @@ final class AppCoordinatorTests: XCTestCase {
         XCTAssertEqual(fixture.audio.stopCount, 1)
         XCTAssertGreaterThanOrEqual(fixture.recognizer.resetCount, 2)
         XCTAssertEqual(fixture.music.stopCount, 1)
-        XCTAssertEqual(fixture.coordinator.lastError, "Recognition failed: network unavailable")
+        XCTAssertEqual(
+            fixture.coordinator.lastError,
+            String(localized: "Recognition failed: \("network unavailable")")
+        )
     }
 
     func testLateRecognitionFailureCannotInterruptPlaybackStartup() async {
@@ -202,14 +205,141 @@ final class AppCoordinatorTests: XCTestCase {
         fixture.coordinator.toggle()
     }
 
+    func testMatchIsRecordedToHistoryAndNotified() async {
+        let fixture = makeFixture()
+        fixture.coordinator.toggle()
+        await waitUntil { fixture.coordinator.state == .active }
+
+        fixture.recognizer.emitMatch(match())
+        await waitUntil { fixture.coordinator.state == .playing }
+
+        XCTAssertEqual(fixture.coordinator.history.entries.map(\.appleMusicID), ["track"])
+        XCTAssertEqual(fixture.notifier.notifiedSongs.map(\.title), ["Test Song"])
+        fixture.coordinator.toggle()
+    }
+
+    func testDisabledNotificationsSuppressTheMatchNotification() async {
+        let fixture = makeFixture()
+        fixture.coordinator.matchNotificationsEnabled = false
+        fixture.coordinator.toggle()
+        await waitUntil { fixture.coordinator.state == .active }
+
+        fixture.recognizer.emitMatch(match())
+        await waitUntil { fixture.coordinator.state == .playing }
+
+        XCTAssertTrue(fixture.notifier.notifiedSongs.isEmpty)
+        XCTAssertEqual(fixture.coordinator.history.entries.count, 1)
+        fixture.coordinator.toggle()
+    }
+
+    func testFollowRoomProbeSwitchesToTheRoomsNewSong() async {
+        let fixture = makeFixture(followPolicy: fastFollowPolicy())
+        fixture.coordinator.followRoomEnabled = true
+        fixture.coordinator.toggle()
+        await waitUntil { fixture.coordinator.state == .active }
+        fixture.music.playbackTime = 10
+
+        fixture.recognizer.emitMatch(match(identifier: "first"))
+        await waitUntil { fixture.coordinator.state == .playing }
+        await waitUntil { fixture.coordinator.isProbing }
+
+        fixture.recognizer.emitMatch(match(identifier: "second", offset: 30))
+        await waitUntil { fixture.music.playedIdentifiers == ["first", "second"] }
+        await waitUntil { fixture.coordinator.state == .playing }
+
+        XCTAssertEqual(fixture.coordinator.matchedSong?.appleMusicID, "second")
+        XCTAssertEqual(fixture.notifier.notifiedSongs.count, 2)
+        fixture.coordinator.toggle()
+    }
+
+    func testFollowRoomProbeCorrectsDriftForTheSameSong() async {
+        let fixture = makeFixture(followPolicy: fastFollowPolicy())
+        fixture.coordinator.followRoomEnabled = true
+        fixture.coordinator.toggle()
+        await waitUntil { fixture.coordinator.state == .active }
+        fixture.music.playbackTime = 10
+
+        fixture.recognizer.emitMatch(match(identifier: "track", offset: 12))
+        await waitUntil { fixture.coordinator.state == .playing }
+        await waitUntil { fixture.coordinator.isProbing }
+
+        fixture.recognizer.emitMatch(match(identifier: "track", offset: 30))
+        await waitUntil(timeoutIterations: 2_000) {
+            fixture.music.seekTimes.contains { abs($0 - 30.2) < 0.05 }
+        }
+
+        XCTAssertEqual(fixture.music.playCount, 1)
+        XCTAssertEqual(fixture.coordinator.state, .playing)
+        fixture.coordinator.toggle()
+    }
+
+    func testDeviceChangeRestoresPerDeviceAdjustment() async {
+        let deviceA = OutputDeviceInfo(uid: "device-a", name: "Built-in")
+        let deviceB = OutputDeviceInfo(uid: "device-b", name: "AirPods")
+        let fixture = makeFixture(device: deviceA)
+
+        fixture.coordinator.beginSyncAdjustment()
+        fixture.coordinator.syncAdjustmentMilliseconds = -180
+        fixture.coordinator.commitSyncAdjustment()
+
+        fixture.deviceObserver.changeDefaultDevice(to: deviceB)
+        XCTAssertEqual(fixture.coordinator.syncAdjustmentMilliseconds, -180)
+
+        fixture.coordinator.beginSyncAdjustment()
+        fixture.coordinator.syncAdjustmentMilliseconds = 120
+        fixture.coordinator.commitSyncAdjustment()
+
+        fixture.deviceObserver.changeDefaultDevice(to: deviceA)
+        XCTAssertEqual(fixture.coordinator.syncAdjustmentMilliseconds, -180)
+        XCTAssertEqual(fixture.music.userAdjustment, -0.18, accuracy: 0.000_001)
+
+        let reloaded = makeFixture(settings: fixture.settings, device: deviceB)
+        XCTAssertEqual(reloaded.coordinator.syncAdjustmentMilliseconds, 120)
+    }
+
+    func testDeviceChangeDuringPlaybackRefreshesLatencyAndSeeksOnce() async {
+        let deviceA = OutputDeviceInfo(uid: "device-a", name: "Built-in")
+        let deviceB = OutputDeviceInfo(uid: "device-b", name: "AirPods")
+        let fixture = makeFixture(device: deviceA)
+        fixture.coordinator.toggle()
+        await waitUntil { fixture.coordinator.state == .active }
+        fixture.music.playbackTime = 10
+
+        fixture.recognizer.emitMatch(match())
+        await waitUntil { fixture.coordinator.state == .playing }
+        await waitUntil { !fixture.music.seekTimes.isEmpty }
+        let seekCountBeforeChange = fixture.music.seekTimes.count
+
+        fixture.deviceObserver.changeDefaultDevice(to: deviceB)
+
+        XCTAssertEqual(fixture.music.refreshOutputLatencyCount, 1)
+        await waitUntil { fixture.music.seekTimes.count == seekCountBeforeChange + 1 }
+        XCTAssertEqual(fixture.coordinator.state, .playing)
+        fixture.coordinator.toggle()
+    }
+
+    private func fastFollowPolicy() -> FollowRoomPolicy {
+        FollowRoomPolicy(
+            probeInterval: .milliseconds(30),
+            probeWindow: .milliseconds(400),
+            tickInterval: .milliseconds(10),
+            endOfTrackLead: 0,
+            driftTolerance: 0.35
+        )
+    }
+
     private func makeFixture(
         microphoneGranted: Bool = true,
         playGate: AsyncGate? = nil,
-        settings: UserDefaults? = nil
+        settings: UserDefaults? = nil,
+        device: OutputDeviceInfo? = nil,
+        followPolicy: FollowRoomPolicy = FollowRoomPolicy()
     ) -> Fixture {
         let audio = AudioMonitorSpy()
         let recognizer = RecognitionSpy()
         let music = MusicPlayerSpy(playGate: playGate)
+        let notifier = MatchNotifierSpy()
+        let deviceObserver = OutputDeviceObserverFake(currentDevice: device)
         let resolvedSettings: UserDefaults
         if let settings {
             resolvedSettings = settings
@@ -223,21 +353,26 @@ final class AppCoordinatorTests: XCTestCase {
             recognizer: recognizer,
             musicPlayer: music,
             requestMicrophoneAccess: { microphoneGranted },
-            settings: resolvedSettings
+            settings: resolvedSettings,
+            notifier: notifier,
+            deviceObserver: deviceObserver,
+            followPolicy: followPolicy
         )
         return Fixture(
             coordinator: coordinator,
             audio: audio,
             recognizer: recognizer,
             music: music,
+            notifier: notifier,
+            deviceObserver: deviceObserver,
             settings: resolvedSettings
         )
     }
 
-    private func match(identifier: String = "track") -> Match {
+    private func match(identifier: String = "track", offset: TimeInterval = 12) -> Match {
         Match(
             song: RecognizedSong(title: "Test Song", artist: "Test Artist", appleMusicID: identifier),
-            referenceOffset: 12,
+            referenceOffset: offset,
             capturedAtUptime: ProcessInfo.processInfo.systemUptime + 3_600
         )
     }
@@ -268,7 +403,40 @@ private struct Fixture {
     let audio: AudioMonitorSpy
     let recognizer: RecognitionSpy
     let music: MusicPlayerSpy
+    let notifier: MatchNotifierSpy
+    let deviceObserver: OutputDeviceObserverFake
     let settings: UserDefaults
+}
+
+@MainActor
+private final class MatchNotifierSpy: MatchNotifying {
+    private(set) var notifiedSongs: [RecognizedSong] = []
+
+    func notifyMatch(_ song: RecognizedSong) {
+        notifiedSongs.append(song)
+    }
+}
+
+@MainActor
+private final class OutputDeviceObserverFake: OutputDeviceObserving {
+    var onDefaultDeviceChange: (@MainActor (OutputDeviceInfo?) -> Void)?
+    private(set) var currentDevice: OutputDeviceInfo?
+    private(set) var startCount = 0
+
+    init(currentDevice: OutputDeviceInfo?) {
+        self.currentDevice = currentDevice
+    }
+
+    func start() {
+        startCount += 1
+    }
+
+    func stop() {}
+
+    func changeDefaultDevice(to device: OutputDeviceInfo?) {
+        currentDevice = device
+        onDefaultDeviceChange?(device)
+    }
 }
 
 @MainActor
@@ -341,10 +509,12 @@ private final class MusicPlayerSpy: MusicPlaying {
         }
         set { storedPlaybackTime = newValue }
     }
+    var playbackDuration: TimeInterval?
     var userAdjustment: TimeInterval = 0
     var outputLatency: TimeInterval = 0
     var hasEnded = false
     var appliesSeeks = true
+    private(set) var refreshOutputLatencyCount = 0
 
     var synchronizationOffset: TimeInterval {
         PlaybackSynchronization.defaultPlaybackOffset + outputLatency + userAdjustment
@@ -385,6 +555,10 @@ private final class MusicPlayerSpy: MusicPlaying {
         if appliesSeeks {
             playbackTime = time
         }
+    }
+
+    func refreshOutputLatency() throws {
+        refreshOutputLatencyCount += 1
     }
 
     func stop() {
