@@ -12,7 +12,7 @@ enum AudioMonitorError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .invalidInputFormat:
-            "The microphone did not provide a usable audio format."
+            String(localized: "The microphone did not provide a usable audio format.")
         }
     }
 }

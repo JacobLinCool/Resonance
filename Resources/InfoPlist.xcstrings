@@ -1,0 +1,40 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "NSMicrophoneUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resonance listens to nearby music through the microphone to recognize the song that is currently playing."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resonance 會透過麥克風聆聽附近的音樂，以辨識目前播放的歌曲。"
+          }
+        }
+      }
+    },
+    "NSAppleMusicUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resonance plays the recognized song from Apple Music, synced to what's playing around you."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resonance 會從 Apple Music 播放辨識到的歌曲，與你身邊的音樂同步。"
+          }
+        }
+      }
+    }
+  }
+}

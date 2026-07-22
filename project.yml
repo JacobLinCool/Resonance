@@ -1,6 +1,7 @@
 name: Resonance
 options:
   bundleIdPrefix: dev.jacoblincool
+  developmentLanguage: en
   createIntermediateGroups: true
   defaultConfig: Release
 configs:
@@ -27,6 +28,8 @@ targets:
       - path: Sources
       - path: Resources/Assets.xcassets
       - path: Resources/PrivacyInfo.xcprivacy
+      - path: Resources/Localizable.xcstrings
+      - path: Resources/InfoPlist.xcstrings
     settings:
       base:
         PRODUCT_NAME: Resonance

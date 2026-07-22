@@ -1,0 +1,614 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "Loudness threshold": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "音量門檻" } }
+      }
+    },
+    "%lld dB": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "%lld dB" } }
+      }
+    },
+    "Reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重設" } }
+      }
+    },
+    "Sync adjustment": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "同步微調" } }
+      }
+    },
+    "Follow the room": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "跟隨現場" } }
+      }
+    },
+    "Re-listen during playback to catch song changes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "播放時定期重新聆聽，跟上現場換歌。" } }
+      }
+    },
+    "Open System Settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "開啟系統設定" } }
+      }
+    },
+    "Version %@ is available": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "新版本 %@ 已推出" } }
+      }
+    },
+    "Re-sync": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "重新同步" } }
+      }
+    },
+    "History": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "歷史紀錄" } }
+      }
+    },
+    "Recognition history": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識歷史" } }
+      }
+    },
+    "Recognition History": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識歷史" } }
+      }
+    },
+    "Settings and Help": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "設定與說明" } }
+      }
+    },
+    "Resonance Settings and Help": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Resonance 設定與說明" } }
+      }
+    },
+    "Quit": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "結束" } }
+      }
+    },
+    "Authorizing": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "授權中" } }
+      }
+    },
+    "Authorizing…": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "授權中…" } }
+      }
+    },
+    "Disabled": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "已停用" } }
+      }
+    },
+    "Recognizing": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識中" } }
+      }
+    },
+    "Active": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "聆聽中" } }
+      }
+    },
+    "Starting": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "準備中" } }
+      }
+    },
+    "Playing": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "播放中" } }
+      }
+    },
+    "Checking the room for changes": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "正在確認現場是否換歌" } }
+      }
+    },
+    "Listening to the room": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "正在聆聽現場" } }
+      }
+    },
+    "Recognition stream active": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識串流進行中" } }
+      }
+    },
+    "Waiting for music above the threshold": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "等待超過門檻的音樂" } }
+      }
+    },
+    "Enable": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "啟用" } }
+      }
+    },
+    "Disable": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "停用" } }
+      }
+    },
+    "Open in Apple Music": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "在 Apple Music 開啟" } }
+      }
+    },
+    "No songs recognized yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "尚未辨識任何歌曲" } }
+      }
+    },
+    "Songs Resonance recognizes appear here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Resonance 辨識到的歌曲會顯示在這裡。" } }
+      }
+    },
+    "%lld songs": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": { "stringUnit": { "state": "translated", "value": "%lld song" } },
+              "other": { "stringUnit": { "state": "translated", "value": "%lld songs" } }
+            }
+          }
+        },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "%lld 首歌曲" } }
+      }
+    },
+    "Clear History": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "清除歷史" } }
+      }
+    },
+    "Remove from History": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "從歷史移除" } }
+      }
+    },
+    "Welcome to Resonance": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "歡迎使用 Resonance" } }
+      }
+    },
+    "Sync to the Music Around You": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "與身邊的音樂同步" } }
+      }
+    },
+    "Listen": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "聆聽" } }
+      }
+    },
+    "Resonance waits until nearby music rises above a loudness threshold.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Resonance 會等到附近的音樂超過音量門檻才開始辨識。" } }
+      }
+    },
+    "Recognize": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識" } }
+      }
+    },
+    "A short sample identifies the song and its exact live position.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "短暫取樣即可辨識歌曲與目前的播放位置。" } }
+      }
+    },
+    "Sync": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "同步" } }
+      }
+    },
+    "The same song starts from Apple Music in your headphones, aligned with the room.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "同一首歌會從 Apple Music 在你的耳機中播放，並與現場對齊。" } }
+      }
+    },
+    "Get Started asks for Microphone and Media & Apple Music access. Playback needs an active Apple Music subscription.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "按下「開始使用」後，系統會要求「麥克風」與「媒體與 Apple Music」權限。播放需要有效的 Apple Music 訂閱。" } }
+      }
+    },
+    "Not Now": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "暫時不要" } }
+      }
+    },
+    "Get Started": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "開始使用" } }
+      }
+    },
+    "Resonance lives in the menu bar — look for the waveform icon.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Resonance 常駐於選單列——請尋找波形圖示。" } }
+      }
+    },
+    "General": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "一般" } }
+      }
+    },
+    "Open at login": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "登入時開啟" } }
+      }
+    },
+    "Start Resonance automatically when you log in.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "登入時自動啟動 Resonance。" } }
+      }
+    },
+    "Match notifications": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "配對通知" } }
+      }
+    },
+    "Show a notification when a recognized song starts playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識到的歌曲開始播放時顯示通知。" } }
+      }
+    },
+    "Briefly re-listen during playback so a changed song switches automatically and timing drift is corrected.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "播放時短暫重新聆聽，現場換歌時自動切換，並校正時間漂移。" } }
+      }
+    },
+    "Global shortcuts": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "全域快速鍵" } }
+      }
+    },
+    "%@ toggles listening anywhere. %@ re-syncs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "在任何地方按 %1$@ 切換聆聽，按 %2$@ 重新同步。" } }
+      }
+    },
+    "Updates": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "更新" } }
+      }
+    },
+    "Check for updates": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "檢查更新" } }
+      }
+    },
+    "Check Now": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "立即檢查" } }
+      }
+    },
+    "The update check failed. Try again later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "更新檢查失敗，請稍後再試。" } }
+      }
+    },
+    "A newer release is ready on GitHub.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "GitHub 上已有較新的版本。" } }
+      }
+    },
+    "Resonance is up to date.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Resonance 已是最新版本。" } }
+      }
+    },
+    "New releases are checked once a day.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "每天自動檢查一次新版本。" } }
+      }
+    },
+    "Requirements": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "系統需求" } }
+      }
+    },
+    "Apple Music subscription": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Apple Music 訂閱" } }
+      }
+    },
+    "Synchronized playback starts songs through Apple Music, which requires an active subscription.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "同步播放透過 Apple Music 播放歌曲，需要有效的訂閱。" } }
+      }
+    },
+    "Microphone and Media & Apple Music access": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "麥克風與「媒體與 Apple Music」權限" } }
+      }
+    },
+    "Both permissions are requested the first time you press Enable.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "第一次按下「啟用」時會要求這兩項權限。" } }
+      }
+    },
+    "Internet connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "網際網路連線" } }
+      }
+    },
+    "Recognition and playback both need to reach Apple's servers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識與播放都需要連線至 Apple 的伺服器。" } }
+      }
+    },
+    "How the Controls Work": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "控制項說明" } }
+      }
+    },
+    "Requests the required permissions and starts listening for nearby music. After a match, microphone recognition stops and Resonance starts the corresponding Apple Music song at the estimated matching position.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "要求必要權限並開始聆聽附近的音樂。配對成功後會停止麥克風辨識，Resonance 從估計的對應位置開始播放 Apple Music 中的同一首歌。" } }
+      }
+    },
+    "Stops microphone recognition and any Apple Music playback started by Resonance, then clears the current match.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "停止麥克風辨識與 Resonance 啟動的 Apple Music 播放，並清除目前的配對。" } }
+      }
+    },
+    "Stops the current playback and listens again for a fresh match. Use this when the room changes songs or the timing no longer feels aligned.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "停止目前的播放並重新聆聽配對。當現場換歌或時間不再對齊時使用。" } }
+      }
+    },
+    "Controls how loud nearby audio must be before it is sent to ShazamKit for recognition.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "控制附近的音訊需要多大聲，才會送交 ShazamKit 辨識。" } }
+      }
+    },
+    "Moves playback up to 500 ms earlier or later. The adjustment is saved separately for each audio output device and restored when you switch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "將播放最多提前或延後 500 毫秒。每個音訊輸出裝置會分別儲存微調值，切換裝置時自動還原。" } }
+      }
+    },
+    "Every recognized song is kept in the history window, with a link back to Apple Music.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "每首辨識到的歌曲都會保留在歷史視窗中，並附上 Apple Music 連結。" } }
+      }
+    },
+    "Privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱私權" } }
+      }
+    },
+    "Your audio stays yours": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "你的音訊只屬於你" } }
+      }
+    },
+    "Resonance does not record or retain microphone audio, operate developer-controlled servers, include analytics, or require an account.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Resonance 不會錄製或保留麥克風音訊、不營運開發者伺服器、不含分析追蹤，也不需要帳號。" } }
+      }
+    },
+    "Privacy Policy": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱私權政策" } }
+      }
+    },
+    "More Information": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "更多資訊" } }
+      }
+    },
+    "Support": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "支援" } }
+      }
+    },
+    "Source Code": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "原始碼" } }
+      }
+    },
+    "Version %@ (%@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "版本 %1$@（%2$@）" } }
+      }
+    },
+    "Now syncing": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "同步播放中" } }
+      }
+    },
+    "Microphone access was denied. Enable it in System Settings › Privacy & Security › Microphone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "麥克風權限遭拒。請在「系統設定 › 隱私權與安全性 › 麥克風」中啟用。" } }
+      }
+    },
+    "Couldn't start the microphone: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "無法啟動麥克風：%@" } }
+      }
+    },
+    "This song isn't available in the Apple Music catalog. Listening again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "這首歌不在 Apple Music 目錄中。繼續聆聽。" } }
+      }
+    },
+    "Recognition failed: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識失敗：%@" } }
+      }
+    },
+    "%@ Listening again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "%@ 繼續聆聽。" } }
+      }
+    },
+    "Apple Music access was denied. Enable it in System Settings › Privacy & Security › Media & Apple Music.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Apple Music 權限遭拒。請在「系統設定 › 隱私權與安全性 › 媒體與 Apple Music」中啟用。" } }
+      }
+    },
+    "Apple Music access is restricted for this account.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "此帳號的 Apple Music 取用受到限制。" } }
+      }
+    },
+    "An active Apple Music subscription is required for playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "播放需要有效的 Apple Music 訂閱。" } }
+      }
+    },
+    "Apple Music is unavailable. Check your connection and the app's code signing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "無法使用 Apple Music。請檢查網路連線與 app 的簽章設定。" } }
+      }
+    },
+    "The recognized song has no Apple Music catalog track.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "辨識到的歌曲沒有對應的 Apple Music 目錄曲目。" } }
+      }
+    },
+    "This song is unavailable in your Apple Music storefront.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "這首歌在你的 Apple Music 地區商店中無法播放。" } }
+      }
+    },
+    "No audio output device is available.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "沒有可用的音訊輸出裝置。" } }
+      }
+    },
+    "The current audio output did not report a usable latency.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "目前的音訊輸出未回報可用的延遲資訊。" } }
+      }
+    },
+    "Apple Music returned an invalid playback position.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Apple Music 回傳了無效的播放位置。" } }
+      }
+    },
+    "Apple Music couldn't start playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "Apple Music 無法開始播放。" } }
+      }
+    },
+    "The microphone did not provide a usable audio format.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "麥克風未提供可用的音訊格式。" } }
+      }
+    }
+  }
+}
