@@ -67,6 +67,26 @@ final class PlaybackSessionController {
         }
     }
 
+    /// Adopts a fresher recognition of the same track as the timeline
+    /// reference, replacing the extrapolation captured minutes ago. With
+    /// `correcting`, one seek realigns playback to the new reference.
+    func adoptFreshMatch(_ match: Match, correcting: Bool) {
+        guard isPlaying else { return }
+
+        self.match = match
+        guard correcting else { return }
+
+        task?.cancel()
+        task = nil
+        do {
+            try musicPlayer.seek(to: musicPlayer.targetPosition(for: match))
+            log.info("follow-the-room drift correction applied")
+            startPlaybackWatcher()
+        } catch {
+            fail(error)
+        }
+    }
+
     func stop() {
         task?.cancel()
         task = nil

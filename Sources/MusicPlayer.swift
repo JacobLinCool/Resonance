@@ -16,25 +16,32 @@ enum MusicPlayerError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .authorizationDenied:
-            "Apple Music access was denied. Enable it in System Settings › Privacy & Security › Media & Apple Music."
+            String(
+                localized: """
+                    Apple Music access was denied. \
+                    Enable it in System Settings › Privacy & Security › Media & Apple Music.
+                    """
+            )
         case .authorizationRestricted:
-            "Apple Music access is restricted for this account."
+            String(localized: "Apple Music access is restricted for this account.")
         case .subscriptionRequired:
-            "An active Apple Music subscription is required for playback."
+            String(localized: "An active Apple Music subscription is required for playback.")
         case .serviceUnavailable:
-            "Apple Music is unavailable. Check your connection and the app's code signing."
+            String(
+                localized: "Apple Music is unavailable. Check your connection and the app's code signing."
+            )
         case .missingCatalogID:
-            "The recognized song has no Apple Music catalog track."
+            String(localized: "The recognized song has no Apple Music catalog track.")
         case .songUnavailable:
-            "This song is unavailable in your Apple Music storefront."
+            String(localized: "This song is unavailable in your Apple Music storefront.")
         case .outputDeviceUnavailable:
-            "No audio output device is available."
+            String(localized: "No audio output device is available.")
         case .invalidOutputLatency:
-            "The current audio output did not report a usable latency."
+            String(localized: "The current audio output did not report a usable latency.")
         case .invalidPlaybackPosition:
-            "Apple Music returned an invalid playback position."
+            String(localized: "Apple Music returned an invalid playback position.")
         case .playbackFailed:
-            "Apple Music couldn't start playback."
+            String(localized: "Apple Music couldn't start playback.")
         }
     }
 }
@@ -58,6 +65,7 @@ enum MusicPlayerPlaybackStatus: Sendable, Equatable {
 @MainActor
 protocol MusicPlaying: AnyObject {
     var playbackTime: TimeInterval? { get }
+    var playbackDuration: TimeInterval? { get }
     var userAdjustment: TimeInterval { get set }
     var synchronizationOffset: TimeInterval { get }
     var hasEnded: Bool { get }
@@ -66,6 +74,7 @@ protocol MusicPlaying: AnyObject {
     func play(_ match: Match) async throws
     func targetPosition(for match: Match) -> TimeInterval
     func seek(to time: TimeInterval) throws
+    func refreshOutputLatency() throws
     func stop()
 }
 
@@ -98,6 +107,13 @@ final class MusicPlayer: MusicPlaying {
     var playbackTime: TimeInterval? {
         let time = backend.playbackTime
         return time.isFinite && time >= 0 ? time : nil
+    }
+
+    /// The loaded catalog track's duration, when MusicKit reported one.
+    var playbackDuration: TimeInterval? {
+        guard let currentSongDuration, currentSongDuration.isFinite, currentSongDuration > 0
+        else { return nil }
+        return currentSongDuration
     }
 
     var hasEnded: Bool {
@@ -199,6 +215,19 @@ final class MusicPlayer: MusicPlaying {
             throw MusicPlayerError.invalidPlaybackPosition
         }
         backend.playbackTime = time
+    }
+
+    /// Re-reads the default output pipeline's latency after a device change so
+    /// the next position calculation compensates the device actually in use.
+    func refreshOutputLatency() throws {
+        let outputLatency = try backend.outputLatency
+        guard outputLatency.isFinite, outputLatency >= 0 else {
+            throw MusicPlayerError.invalidOutputLatency
+        }
+        self.outputLatency = outputLatency
+        log.info(
+            "output latency compensation refreshed: \(Int((outputLatency * 1_000).rounded()), privacy: .public) ms"
+        )
     }
 
     func stop() {
