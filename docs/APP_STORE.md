@@ -94,8 +94,76 @@ Resonance does not record or retain microphone audio and does not operate develo
 ## Localizations
 
 The listing and the app are available in English (primary) and Traditional
-Chinese. Localize the App Store metadata for `zh-Hant` using translations of
-the copy in this document.
+Chinese. The `zh-Hant` metadata below is the canonical translation of the
+English copy in this document.
+
+### zh-Hant subtitle
+
+```text
+與身邊的音樂同步
+```
+
+### zh-Hant promotional text
+
+```text
+聽到附近正在播放的音樂？Resonance 會辨識它，並讓你的 Apple Music 從相同的位置接著播放。
+```
+
+### zh-Hant description
+
+```text
+Resonance 是一款 macOS 選單列工具程式，能辨識附近正在播放的音樂，並透過你的 Apple Music 訂閱，從對應的位置開始播放同一首歌。
+
+它專為咖啡廳、工作室、辦公室、派對等共享空間設計。當你想改用自己的耳機或喇叭繼續聆聽時，按下「啟用」即可。Resonance 會聆聽可辨識的歌曲，以 ShazamKit 完成辨識，並將 Apple Music 播放同步到你當下聽到的段落。
+
+功能特色
+
+• 從選單列辨識附近的音樂
+• 從對應位置開始播放 Apple Music 中的同一首歌
+• 跟隨現場：可選擇在播放時持續聆聽，現場換歌時自動切換，並校正時間漂移
+• 辨識歷史：保留封面與「在 Apple Music 開啟」連結
+• 補償音訊輸出延遲，切換輸出裝置時自動重新測量
+• ±500 毫秒手動同步微調，依輸出裝置分別儲存
+• 配對的歌曲開始播放時可選擇顯示通知
+• 可選的全域快速鍵與登入時啟動
+• 輕量、沙盒化的 macOS app
+
+控制項
+
+「啟用」會要求必要權限並開始聆聽。配對成功後，麥克風辨識停止，Apple Music 開始播放。
+
+「停用」會停止辨識以及由 Resonance 啟動的 Apple Music 播放。
+
+「重新同步」會停止目前播放並重新聆聽配對。
+
+系統需求
+
+• 有效的 Apple Music 訂閱
+• 「麥克風」與「媒體與 Apple Music」權限
+• 網際網路連線（ShazamKit 辨識與 Apple Music 播放）
+
+Resonance 不會錄製或保留麥克風音訊，也不營運開發者伺服器。Apple Music 目錄的可用性依國家或地區而異。
+```
+
+### zh-Hant keywords
+
+The following value is 53 characters, within the 100-character limit.
+
+```text
+音樂同步,歌曲辨識,選單列,音訊同步,播放,環境音樂,Apple Music,ShazamKit,聽歌辨曲
+```
+
+### zh-Hant What's New (0.2.0)
+
+```text
+• 跟隨現場：Resonance 可在播放時持續聆聽，現場換歌時自動切換，並校正時間漂移
+• 辨識歷史：保留封面與「在 Apple Music 開啟」連結
+• 同步微調現在依音訊輸出裝置分別儲存；播放中切換裝置會重新測量延遲並重新對齊一次
+• 選單列面板加入封面、播放進度與「在 Apple Music 開啟」連結
+• 可選的配對通知、全域快速鍵（⌃⌥⌘E／⌃⌥⌘R）與登入時啟動
+• 首次啟動的歡迎導覽，先說明權限用途
+• 正體中文介面
+```
 
 ## Keywords
 
