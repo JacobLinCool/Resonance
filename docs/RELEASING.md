@@ -17,6 +17,11 @@ Releases are created only from strict `vX.Y.Z` tags. The tag provides
 `CFBundleShortVersionString`; the GitHub Actions run number provides the unique
 `CFBundleVersion`.
 
+Direct-download builds check `releases/latest` on GitHub once a day and offer
+a download link when the latest tag is newer than the running version. Publish
+GitHub releases as full releases with `vX.Y.Z` tags — prerelease or
+non-numeric tags are ignored by the in-app check.
+
 ## Apple configuration
 
 The explicit App ID `dev.jacoblincool.Resonance` must belong to the signing

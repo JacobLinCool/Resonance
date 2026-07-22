@@ -54,9 +54,12 @@ FEATURES
 
 • Identifies nearby music from the menu bar
 • Starts the corresponding Apple Music song at the matching position
-• Compensates for audio-output latency
-• Provides a manual ±500 ms sync adjustment
-• Lets you re-identify the room audio whenever playback drifts or the song changes
+• Follow the room: optionally keeps listening during playback, switching automatically when the room changes songs and correcting drift
+• Keeps a recognition history with artwork and Open in Apple Music links
+• Compensates for audio-output latency, re-measured when you switch output devices
+• Provides a manual ±500 ms sync adjustment, saved per output device
+• Posts an optional notification when a match starts playing
+• Optional global shortcuts and open-at-login
 • Runs as a lightweight, sandboxed macOS app
 
 CONTROLS
@@ -75,6 +78,24 @@ REQUIREMENTS
 
 Resonance does not record or retain microphone audio and does not operate developer-controlled servers. Apple Music catalog availability varies by country or region.
 ```
+
+## What's New (0.2.0)
+
+```text
+• Follow the room: Resonance can keep listening while it plays, switching automatically when the room changes songs and correcting timing drift
+• Recognition history with artwork and Open in Apple Music links
+• Sync adjustment is now saved per audio output device, and switching devices mid-song re-measures latency and re-aligns once
+• Artwork, playback progress, and an Open in Apple Music link in the popover
+• Optional match notifications, global shortcuts (⌃⌥⌘E / ⌃⌥⌘R), and open-at-login
+• First-run welcome window that explains the permission prompts
+• Traditional Chinese (zh-Hant) localization
+```
+
+## Localizations
+
+The listing and the app are available in English (primary) and Traditional
+Chinese. Localize the App Store metadata for `zh-Hant` using translations of
+the copy in this document.
 
 ## Keywords
 
@@ -115,10 +136,12 @@ For the current implementation:
 - User Privacy Choices URL: leave blank.
 
 Resonance processes microphone audio in real time through Apple's ShazamKit,
-uses MusicKit for catalog lookup and playback, and saves two preferences locally.
-It has no developer-controlled backend, analytics, advertising, accounts, or
-long-term audio storage. Revisit these answers before every release if any of
-those facts change.
+uses MusicKit for catalog lookup and playback, and saves its preferences and
+the on-device recognition history (song titles, artists, artwork URLs, and
+timestamps — never audio) locally in `UserDefaults`. It has no
+developer-controlled backend, analytics, advertising, accounts, or long-term
+audio storage. Revisit these answers before every release if any of those
+facts change.
 
 The bundled `PrivacyInfo.xcprivacy` declares no tracking or collected data. It
 declares the approved required-reason API uses for app-only `UserDefaults`
@@ -145,7 +168,7 @@ Resonance is a macOS menu bar utility. The App Store purchase is for Resonance's
 To test:
 1. Sign in to Apple Music on the review Mac with an account that can play catalog content.
 2. Play a commercially released song from a separate phone or speaker near the Mac.
-3. Launch Resonance from the menu bar and choose Enable.
+3. Launch Resonance. On first launch a welcome window explains the flow; choose Get Started, or close it and choose Enable from the menu bar icon.
 4. Grant Microphone and Media & Apple Music access when prompted.
 5. Resonance identifies the nearby song using ShazamKit, stops microphone recognition, and starts the corresponding Apple Music catalog song at the estimated matching position.
 6. During playback, Re-sync stops the current song and returns to recognition. Disable stops recognition and any playback started by Resonance.

@@ -13,14 +13,14 @@ Resonance requires:
 - an active Apple Music subscription
 - microphone access and an internet connection
 
-No public binary has been published yet. To use Resonance today, complete the
-[signed development setup](#run-a-working-development-build). After the first
-release is available, the same feature set will be distributed through two
-channels:
+Resonance is distributed through two channels with the same feature set:
 
+- **Mac App Store:** paid listing named
+  [**Resonance: Music Sync**](https://apps.apple.com/tw/app/resonance-music-sync/id6791231331).
 - **GitHub Releases:** free Developer ID-signed, notarized DMG and ZIP.
-- **Mac App Store:** paid listing named **Resonance: Music Sync**, priced at
-  approximately US$4.99.
+  Direct-download builds check GitHub once a day and show a download link in
+  the popover and settings when a newer release exists; App Store copies update
+  through the App Store.
 
 To install the direct-download release:
 
@@ -41,6 +41,11 @@ An ad-hoc build from source can validate the UI, but ShazamKit recognition and
 MusicKit playback require a signed App ID with both services enabled.
 
 ## First use
+
+On the first launch, a welcome window explains the listen → recognize → sync
+flow and which permissions are about to be requested. **Get Started** triggers
+the permission prompts immediately; **Not Now** leaves Resonance idle in the
+menu bar. Afterwards:
 
 1. Click the Resonance icon in the menu bar.
 2. Click **Enable**.
@@ -69,8 +74,27 @@ The **Sync adjustment** slider is always available and adds a `-500 ms` to
 Therefore, the displayed `+0 ms` means an effective `+200 ms` base offset, and
 displayed `+50 ms` means `+250 ms`, before output-device latency is added. If
 Resonance sounds late, move it right; if it sounds early, move it left. The
-setting is saved for future matches. During playback, dragging only previews
-the value and releasing the slider applies one seek.
+committed value is saved separately for each audio output device — AirPods and
+built-in speakers need different trims — and restored when the system default
+output changes. During playback, dragging only previews the value and releasing
+the slider applies one seek. Switching the default output device mid-playback
+also re-reads the new device's reported latency and applies one corrective seek.
+
+**Follow the room** keeps the microphone in play while a synced song runs in
+your headphones: every ~25 seconds, and again near the end of the track, a
+short probe re-runs recognition against the room. A different song switches
+playback automatically; the same song is re-aligned when the measured drift
+exceeds 350 ms; an unrecognizable room leaves playback untouched. The mode is
+off by default and can be enabled from the popover or Settings.
+
+Every recognized song is stored in the **History** window (clock icon in the
+popover) with its artwork, recognition time, and an Open in Apple Music link.
+The list keeps the last 100 songs locally; consecutive re-recognitions of the
+same song within ten minutes collapse into one entry. **Match notifications**
+(on by default, Settings toggle) post a "Now syncing" notification when a
+match starts playing. **Global shortcuts** (off by default) map ⌃⌥⌘E to
+Enable/Disable and ⌃⌥⌘R to Re-sync systemwide, and **Open at login** starts
+Resonance with your Mac.
 
 ## How it works
 
@@ -79,7 +103,7 @@ the value and releasing the slider applies one seek.
 | **Disabled** | Microphone capture and background polling are stopped. |
 | **Active** | Crossing the threshold starts the recognition stream. The gate remains open through brief quiet passages, then closes after about 2.5 seconds. |
 | **Starting** | Recognition is stopped while MusicKit prepares the matched catalog track. |
-| **Playing** | The matched Apple Music track plays while microphone capture and recognition are stopped. |
+| **Playing** | The matched Apple Music track plays while microphone capture and recognition are stopped. With Follow the room enabled, short periodic probes reopen the microphone to detect song changes and drift. |
 
 After a match, Resonance prebuffers and positions the Apple Music entry before
 playback. It advances that position by the default output device's reported
@@ -238,18 +262,28 @@ App Store Connect copy.
 
 | File | Responsibility |
 | --- | --- |
-| `AppDelegate.swift` | Shared coordinator, app-reopen handling, and the standalone fallback window. |
+| `AppDelegate.swift` | App lifecycle: shared coordinator, reopen handling, onboarding, shortcuts, update checks, and window controllers. |
 | `AppCoordinator.swift` | Main-actor state machine, authorization, and service transitions. |
+| `AppCoordinator+FollowRoom.swift` | Follow-the-room probe loop: song-change switching and drift correction during playback. |
+| `AppCoordinator+Adjustment.swift` | Per-device sync adjustment persistence and default-output-device change handling. |
 | `AudioMonitor.swift` | AVAudioEngine tap, multichannel RMS meter, atomic threshold, and hysteresis gate. |
 | `ShazamRecognizer.swift` | Streaming SHSession wrapper with synchronized session replacement and stale-result rejection. |
-| `MusicPlayer.swift` | Authorization, serialized startup, cancellation rollback, playback, and seeking. |
+| `MusicPlayer.swift` | Authorization, serialized startup, cancellation rollback, playback, seeking, and latency refresh. |
 | `MusicPlayerBackend.swift` | Main-actor MusicKit adapter, catalog loading, subscription checks, and type erasure for tests. |
 | `Models.swift` | Sendable recognition values and monotonic position extrapolation. |
+| `MatchHistory.swift` | Bounded, persisted recognition history with duplicate collapsing. |
+| `MatchNotifier.swift` | Local "Now syncing" notifications with lazy authorization. |
 | `OutputLatency.swift` | Converts Core Audio device, stream, safety, and buffer latency into playback lead time. |
-| `PlaybackSessionController.swift` | Bounded startup alignment, one-shot manual adjustment, and playback-end watching. |
+| `OutputDeviceObserver.swift` | Core Audio default-output-device identity and change notifications. |
+| `LoginItem.swift` | SMAppService launch-at-login registration and its observable toggle model. |
+| `HotKeyCenter.swift` | Sandbox-safe Carbon global hot keys and the shortcuts settings model. |
+| `UpdateChecker.swift` | GitHub latest-release comparison for direct-download builds. |
+| `PlaybackSessionController.swift` | Bounded startup alignment, one-shot manual adjustment, fresh-match adoption, and playback-end watching. |
 | `PlaybackSynchronization.swift` | Timestamped error measurement, robust filtering, and bounded startup-correction policy. |
-| `ContentView.swift` | Menu-bar popover, live meter, threshold, sync adjustment, status, and controls. |
-| `SettingsView.swift` | Requirements, control explanations, privacy disclosure, and public support links. |
+| `ContentView.swift` | Menu-bar popover: artwork, progress, live meter, threshold, sync adjustment, follow toggle, and controls. |
+| `HistoryView.swift` | Recognition history window with artwork and Apple Music links. |
+| `OnboardingView.swift` | First-run walkthrough shown before any permission prompt. |
+| `SettingsView.swift` | General settings, update checks, requirements, control explanations, privacy disclosure, and support links. |
 
 ## License
 
